@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": false,
   "dependencies": {
+    "mongoose": "^6.7.1"
   },
   "scripts": {
     "dev": "nodemon app.js",
