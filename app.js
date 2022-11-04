@@ -1,16 +1,37 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const { PORT = 3000 } = process.env;
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true
+  //useCreateIndex: true,
+  //useFindAndModify: false
 });
+
+const User = require('./models/user');
+//app.use('/users', require('./routes/user'));
+//app.use('/cards', require('./routes/card'));
+app.post('/users', (req, res) => {
+  const  item = req.body;
+  console.log(item)
+  /*
+  User.create({ name, about, avatar })
+    .then(user => {
+      console.log("создали")
+      res.send({ data: user })
+      })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+      */
+});
+
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`)
-})
+});
+
