@@ -11,20 +11,20 @@ module.exports.getCards = (req, res) => {
     )
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
-/*
-module.exports.getUserById = (req, res) => {
+
+module.exports.deleteCardById = (req, res) => {
   console.log(req.params)
-  const { id } = req.params;
-  console.log(id)
-  User.findById(id)
-    .then(user => {
-      console.log({ data: user })
-      res.send({ data: user })
+  const { cardId } = req.params;
+  console.log(cardId)
+  Card.findByIdAndRemove(cardId)
+    .then(card => {
+      console.log({ data: card })
+      res.send({ data: card })
       }
     )
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
-*/
+
 module.exports.createCard = (req, res) => {
   console.log("создаем");
   const { name, link } = req.body;
@@ -36,6 +36,28 @@ module.exports.createCard = (req, res) => {
   }
   console.log(cardObject);
   Card.create(cardObject)
+    .then(card => {
+      res.send({ data: card })
+      })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+
+module.exports.likeCard = (req, res) => {
+  console.log("likaem");
+  const { cardId } = req.params;
+  const id = req.user._id;
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: id } }, { new: true })
+    .then(card => {
+      res.send({ data: card })
+      })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+
+module.exports.dislikeCard = (req, res) => {
+  console.log("dislikaem");
+  const { cardId } = req.params;
+  const id = req.user._id;
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: id } }, { new: true })
     .then(card => {
       res.send({ data: card })
       })

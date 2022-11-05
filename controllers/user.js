@@ -33,3 +33,27 @@ module.exports.createUser = (req, res) => {
       })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
+
+module.exports.updateMeInfo = (req, res) => {
+  console.log(req.body);
+  console.log(req.user);
+  const id = req.user._id;
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(id, { name, about })
+    .then(user => {
+      res.send({ data: user })
+      })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+
+module.exports.updateMeAvatar = (req, res) => {
+  console.log(req.body);
+  console.log(req.user);
+  const id = req.user._id;
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(id, { avatar })
+    .then(user => {
+      res.send({ data: user })
+      })
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};

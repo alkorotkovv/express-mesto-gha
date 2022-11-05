@@ -20,9 +20,8 @@ const addId = (req, res, next) => {
   next();
 };
 
-
-app.use('/', require('./routes/user'));
 app.use(addId);
+app.use('/', require('./routes/user'));
 app.use('/', require('./routes/card'));
 
 
