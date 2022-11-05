@@ -13,6 +13,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   //useFindAndModify: false
 });
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '636623eba707306c2bc70a40' // вставьте сюда _id созданного в предыдущем пункте пользователя
+  };
+
+  next();
+});
+
 app.use('/', require('./routes/user.js'));
 //app.use('/cards', require('./routes/card'));
 /*
