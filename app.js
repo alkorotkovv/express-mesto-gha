@@ -13,32 +13,19 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   //useFindAndModify: false
 });
 
-app.use((req, res, next) => {
+const addId = (req, res, next) => {
   req.user = {
     _id: '636623eba707306c2bc70a40' // вставьте сюда _id созданного в предыдущем пункте пользователя
   };
-
   next();
-});
+};
 
-app.use('/', require('./routes/user.js'));
-//app.use('/cards', require('./routes/card'));
-/*
-app.post('/users', (req, res) => {
 
-  console.log(req.body)
-  res.send("text");
-})
-  /*
-  User.create({ name, about, avatar })
-    .then(user => {
-      console.log("создали")
-      res.send({ data: user })
-      })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+app.use('/', require('./routes/user'));
+app.use(addId);
+app.use('/', require('./routes/card'));
 
-});
-*/
+
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает

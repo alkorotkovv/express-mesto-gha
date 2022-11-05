@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const userSchema = require('./user');
 
 const cardSchema = new mongoose.Schema({
@@ -13,16 +14,17 @@ const cardSchema = new mongoose.Schema({
     required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
   },
   owner: {
-    type: userSchema, // имя — это строка
+    type: Schema.Types.ObjectId, // имя — это строка
     required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
+    ref: 'userSchema',
   },
   likes: [{
-    type: userSchema, // имя — это строка
-    required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
+    type: Schema.Types.ObjectId, // имя — это строка
+    ref: 'userSchema',
+    default: [],
   }],
   createdAt: {
     type: Date, // имя — это строка
-    required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
   }
 });
 
