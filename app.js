@@ -8,17 +8,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
-  useNewUrlParser: true
+  //useNewUrlParser: true
   //useCreateIndex: true,
   //useFindAndModify: false
 });
 
-const User = require('./models/user');
-//app.use('/users', require('./routes/user'));
+app.use('/', require('./routes/user.js'));
 //app.use('/cards', require('./routes/card'));
+/*
 app.post('/users', (req, res) => {
-  const  item = req.body;
-  console.log(item)
+
+  console.log(req.body)
+  res.send("text");
+})
   /*
   User.create({ name, about, avatar })
     .then(user => {
@@ -26,9 +28,9 @@ app.post('/users', (req, res) => {
       res.send({ data: user })
       })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
-      */
-});
 
+});
+*/
 
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
