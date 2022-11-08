@@ -56,7 +56,7 @@ module.exports.updateMeInfo = (req, res) => {
   //console.log(req.user);
   const id = req.user._id;
   const { name, about } = req.body;
-  User.findByIdAndUpdate(id, { name, about })
+  User.findByIdAndUpdate(id, { name, about }, { new: true, runValidators: true })
     .then(user => {
       if (user)
         res.send({ data: user })
@@ -77,7 +77,7 @@ module.exports.updateMeAvatar = (req, res) => {
   //console.log(req.user);
   const id = req.user._id;
   const { avatar } = req.body;
-  User.findByIdAndUpdate(id, { avatar })
+  User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
     .then(user => {
       if (user)
         res.send({ data: user })
