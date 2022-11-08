@@ -18,8 +18,7 @@ const userSchema = new mongoose.Schema({
     type: String, // имя — это строка
     required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
   }
-},
-{ toObject: { useProjection: true }, toJSON: { useProjection: true } }
+}
 );
 
 module.exports = mongoose.model('user', userSchema);
