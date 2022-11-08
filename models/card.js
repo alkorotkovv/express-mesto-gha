@@ -28,6 +28,8 @@ const cardSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   }
-});
+},
+{ toObject: { useProjection: true }, toJSON: { useProjection: true } }
+);
 
 module.exports = mongoose.model('card', cardSchema);
