@@ -14,7 +14,7 @@ module.exports.getUserById = (req, res) => {
   User.findById(id)
     .then((user) => {
       if (user) res.send({ data: user });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Пользователь с таким id не найден: ${err.name}` });
+      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
@@ -47,7 +47,7 @@ module.exports.updateMeInfo = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user) res.send({ data: user });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Пользователь с таким id не найден: ${err.name}` });
+      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
@@ -63,7 +63,7 @@ module.exports.updateMeAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (user) res.send({ data: user });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Пользователь с таким id не найден: ${err.name}` });
+      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {

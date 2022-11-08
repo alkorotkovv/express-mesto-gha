@@ -6,7 +6,7 @@ module.exports.getCards = (req, res) => {
     .then((cards) => {
       res.send({ data: cards });
     })
-    .catch(() => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}` }));
+    .catch((err) => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}` }));
 };
 
 module.exports.createCard = (req, res) => {
@@ -34,7 +34,7 @@ module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndRemove(cardId)
     .then((card) => {
       if (card) res.send({ data: card });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Карточка с таким id не найдена: ${err.name}` });
+      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
@@ -52,7 +52,7 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (card) res.send({ data: card });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Карточка с таким id не найдена: ${err.name}` });
+      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
@@ -70,7 +70,7 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (card) res.send({ data: card });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Карточка с таким id не найдена: ${err.name}` });
+      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Карточка с таким id не найдена' });
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
