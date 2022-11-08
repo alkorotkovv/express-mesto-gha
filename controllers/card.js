@@ -61,6 +61,7 @@ module.exports.likeCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then(card => {
+      console.log(card)
       if (card)
         res.send({ data: card })
       else
