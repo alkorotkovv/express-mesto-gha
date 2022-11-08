@@ -13,14 +13,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   //useFindAndModify: false
 });
 
-function errorHandler(err, req, res, next) {
-  if (res.headersSent) {
-    return next(err);
-  }
-  res.status(500);
-  res.render('error', { error: err });
-}
-
 const addId = (req, res, next) => {
   req.user = {
     _id: '636a3db2bb298af34444554f'
@@ -38,7 +30,6 @@ app.use((req, res, next) => {
 
 
 app.listen(PORT, () => {
-  // Если всё работает, консоль покажет, какой порт приложение слушает
   console.log(`App listening on port ${PORT}`)
 });
 
