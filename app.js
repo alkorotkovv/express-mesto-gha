@@ -13,9 +13,17 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   //useFindAndModify: false
 });
 
+function errorHandler(err, req, res, next) {
+  if (res.headersSent) {
+    return next(err);
+  }
+  res.status(500);
+  res.render('error', { error: err });
+}
+
 const addId = (req, res, next) => {
   req.user = {
-    _id: '636a3db2bb298af34444554f' // вставьте сюда _id созданного в предыдущем пункте пользователя
+    _id: '636a3db2bb298af34444554f'
   };
   next();
 };
@@ -23,6 +31,9 @@ const addId = (req, res, next) => {
 app.use(addId);
 app.use('/', require('./routes/user'));
 app.use('/', require('./routes/card'));
+app.use((req, res, next) => {
+  res.status(404).send({ message: `Что-то пошло не так` })
+})
 
 
 
