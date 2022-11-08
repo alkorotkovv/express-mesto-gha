@@ -21,7 +21,7 @@ app.use('/', require('./routes/user'));
 app.use('/', require('./routes/card'));
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Что-то пошло не так' });
+  res.status(404).send({ message: 'Такого роута не существует' });
 });
 
 app.listen(PORT, () => {
