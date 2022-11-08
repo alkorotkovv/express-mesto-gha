@@ -1,3 +1,4 @@
+const {constants} = require('http2');
 const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
@@ -7,7 +8,7 @@ module.exports.getCards = (req, res) => {
       //console.log({ data: cards })
       res.send({ data: cards })
     })
-    .catch(() => res.status(500).send({ message: `Произошла ошибка: ${err}`}));
+    .catch(() => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`}));
 };
 
 module.exports.deleteCardById = (req, res) => {
@@ -20,9 +21,15 @@ module.exports.deleteCardById = (req, res) => {
       if (card)
         res.send({ data: card })
       else
-      res.status(404).send({ message: `Карточка с таким id не найдена: ${err}`})
+      res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Карточка с таким id не найдена: ${err.name}`})
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      //console.log(err.name);
+      if ((err.name === "CastError") || (err.name === "ValidationError"))
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
+      else
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
+    });
 };
 
 module.exports.createCard = (req, res) => {
@@ -41,9 +48,9 @@ module.exports.createCard = (req, res) => {
     .catch((err) => {
       //console.log(err.name);
       if ((err.name === "CastError") || (err.name === "ValidationError"))
-        res.status(400).send({ message: `Переданы некорректные данные: ${err}`})
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
       else
-        res.status(500).send({ message: `Произошла ошибка: ${err}`})
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
     });
 };
 
@@ -55,14 +62,14 @@ module.exports.likeCard = (req, res) => {
       if (card)
         res.send({ data: card })
       else
-        res.status(404).send({ message: `Карточка с таким id не найдена: ${err}`})
+        res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Карточка с таким id не найдена: ${err.name}`})
     })
     .catch((err) => {
       //console.log(err.name);
       if ((err.name === "CastError") || (err.name === "ValidationError"))
-        res.status(400).send({ message: `Переданы некорректные данные: ${err}`})
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
       else
-        res.status(500).send({ message: `Произошла ошибка: ${err}`})
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
     });
 };
 
@@ -74,13 +81,13 @@ module.exports.dislikeCard = (req, res) => {
       if (card)
         res.send({ data: card })
       else
-        res.status(404).send({ message: `Карточка с таким id не найдена: ${err}`})
+        res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Карточка с таким id не найдена: ${err.name}`})
     })
     .catch((err) => {
       //console.log(err.name);
       if ((err.name === "CastError") || (err.name === "ValidationError"))
-        res.status(400).send({ message: `Переданы некорректные данные: ${err}`})
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
       else
-        res.status(500).send({ message: `Произошла ошибка: ${err}`})
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
     });
 };

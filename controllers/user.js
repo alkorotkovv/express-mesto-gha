@@ -1,3 +1,4 @@
+const {constants} = require('http2');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
@@ -7,7 +8,7 @@ module.exports.getUsers = (req, res) => {
       res.send({ data: users })
       }
     )
-    .catch(() => res.status(500).send({ message: `Произошла ошибка: ${err}`}));
+    .catch(() => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`}));
 };
 
 module.exports.getUserById = (req, res) => {
@@ -20,15 +21,15 @@ module.exports.getUserById = (req, res) => {
       if (user)
         res.send({ data: user })
       else
-        res.status(404).send({ message: `Пользователь с таким id не найден: ${err}`})
+        res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Пользователь с таким id не найден: ${err.name}`})
       }
     )
     .catch((err) => {
       //console.log(err.name);
       if ((err.name === "CastError") || (err.name === "ValidationError"))
-        res.status(400).send({ message: `Переданы некорректные данные: ${err}`})
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
       else
-        res.status(500).send({ message: `Произошла ошибка: ${err}`})
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
   });
 };
 
@@ -42,9 +43,9 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       //console.log(err.name);
       if ((err.name === "CastError") || (err.name === "ValidationError"))
-        res.status(400).send({ message: `Переданы некорректные данные: ${err}`})
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
       else
-        res.status(500).send({ message: `Произошла ошибка: ${err}`})
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
   });
 };
 
@@ -58,14 +59,14 @@ module.exports.updateMeInfo = (req, res) => {
       if (user)
         res.send({ data: user })
       else
-        res.status(404).send({ message: `Пользователь с таким id не найден: ${err}`})
+        res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Пользователь с таким id не найден: ${err.name}`})
     })
     .catch((err) => {
       //console.log(err.name);
       if ((err.name === "CastError") || (err.name === "ValidationError"))
-        res.status(400).send({ message: `Переданы некорректные данные: ${err}`})
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
       else
-        res.status(500).send({ message: `Произошла ошибка: ${err}`})
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
     });
 };
 
@@ -79,13 +80,13 @@ module.exports.updateMeAvatar = (req, res) => {
       if (user)
         res.send({ data: user })
       else
-        res.status(404).send({ message: `Пользователь с таким id не найден: ${err}`})
+        res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: `Пользователь с таким id не найден: ${err.name}`})
     })
     .catch((err) => {
       //console.log(err.name);
       if ((err.name === "CastError") || (err.name === "ValidationError"))
-        res.status(400).send({ message: `Переданы некорректные данные: ${err}`})
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
       else
-        res.status(500).send({ message: `Произошла ошибка: ${err}`})
+        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
     });
 };
