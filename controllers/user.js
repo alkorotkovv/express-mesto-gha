@@ -28,6 +28,8 @@ module.exports.getUserById = (req, res) => {
       //console.log(err.name);
       if ((err.name === "CastError") || (err.name === "ValidationError"))
         res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Переданы некорректные данные: ${err.name}`})
+      else if (err.name === "ReferenceError")
+        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: `Пользователя с таким id не существует: ${err.name}`})
       else
         res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: `Произошла ошибка: ${err.name}`})
   });
