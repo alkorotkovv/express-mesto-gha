@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const userSchema = require('./user');
 
 const cardSchema = new mongoose.Schema({
+  versionKey: false,
   name: { // у пользователя есть имя — опишем требования к имени в схеме:
     type: String, // имя — это строка
     required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
@@ -10,21 +11,22 @@ const cardSchema = new mongoose.Schema({
     maxlength: 30, // а максимальная — 30 символов
   },
   link: {
-    type: String, // имя — это строка
-    required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
+    type: String,
+    required: true,
   },
   owner: {
-    type: Schema.Types.ObjectId, // имя — это строка
-    required: true, // оно должно быть у каждого пользователя, так что имя — обязательное поле
+    type: Schema.Types.ObjectId,
+    required: true,
     ref: 'userSchema',
   },
   likes: [{
-    type: Schema.Types.ObjectId, // имя — это строка
+    type: Schema.Types.ObjectId,
     ref: 'userSchema',
     default: [],
   }],
   createdAt: {
-    type: Date, // имя — это строка
+    type: Date,
+    default: Date.now(),
   }
 });
 
