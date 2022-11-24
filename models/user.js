@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 
-const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/;
 const userSchema = new mongoose.Schema({
   versionKey: false,
   name: { // у пользователя есть имя — опишем требования к имени в схеме:
@@ -20,10 +19,6 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String, // имя — это строка
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: {
-      validator: (url) => { urlRegex.test(url); },
-      message: () => 'Неверный формат email',
-    },
   },
   email: {
     type: String, // имя — это строка
