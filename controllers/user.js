@@ -9,18 +9,18 @@ const NotFoundError = require('../errors/NotFoundError');
 const ServerError = require('../errors/ServerError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
-module.exports.getMe = (req, res) => {
+module.exports.getMe = (req, res, next) => {
   const id = req.user._id;
   User.findById(id)
     .then((user) => {
       if (user) res.send({ data: user });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
+      else next(new NotFoundError('Пользователь с таким id не найден'));
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
-        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
-        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        next(new ServerError('Произошла ошибка'));
       }
     });
 };
@@ -33,7 +33,7 @@ module.exports.getUsers = (req, res) => {
     .catch(() => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' }));
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
     .then((user) => {
@@ -42,7 +42,7 @@ module.exports.getUserById = (req, res) => {
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
-        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
