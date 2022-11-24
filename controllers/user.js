@@ -1,4 +1,5 @@
 const { constants } = require('http2');
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
@@ -26,8 +27,13 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => {
       res.send({ data: user });
     })
@@ -69,5 +75,27 @@ module.exports.updateMeAvatar = (req, res) => {
       } else {
         res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
       }
+    });
+};
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      if (!matched) {
+        // хеши не совпали — отклоняем промис
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+      // аутентификация успешна
+      return res.send({ message: 'Всё верно!' });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
     });
 };
