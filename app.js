@@ -26,7 +26,6 @@ const addId = (req, res, next) => {
 app.post('/signin', login);
 app.post('/signup', createUser);
 
-//app.use(addId);
 app.use(auth);
 app.use('/', require('./routes/user'));
 app.use('/', require('./routes/card'));
