@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const { Joi } = require('celebrate');
 
+const urlSchema = Joi.string().uri({ scheme: ['http', 'https'] }).required();
 const userSchema = new mongoose.Schema({
   versionKey: false,
   name: { // у пользователя есть имя — опишем требования к имени в схеме:
@@ -19,6 +21,10 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String, // имя — это строка
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator: (value) => !urlSchema.validate(value).error,
+      message: () => 'Аватар должен быть http(s)-URL',
+    },
   },
   email: {
     type: String, // имя — это строка
