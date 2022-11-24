@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const {
   login,
   createUser,
@@ -39,6 +39,7 @@ app.use(auth);
 app.use('/', require('./routes/user'));
 app.use('/', require('./routes/card'));
 
+app.use(errors());
 app.use((req, res) => {
   res.status(404).send({ message: 'Такого роута не существует' });
 });
