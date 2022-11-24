@@ -37,20 +37,19 @@ module.exports.deleteCardById = (req, res, next) => {
 
   Card.findById(cardId).populate('owner')
     .then((cardData) => {
-      if (cardData.owner._id.toString() === req.user._id) {
-        Card.findByIdAndRemove(cardId)
-          .then((card) => {
-            if (card) res.send({ data: card });
-            else next(new NotFoundError('Карточка с таким id не найдена'));
-          })
-          .catch((err) => {
-            if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
-              next(new BadRequestError('Переданы некорректные данные'));
-            } else {
-              next(new ServerError('Произошла ошибка'));
-            }
-          });
-      } else next(new ForbiddenError('Карточка принадлежит другому пользователю'));
+      if (cardData) {
+        if (cardData.owner._id.toString() === req.user._id) {
+          Card.findByIdAndRemove(cardId)
+            .then((card) => { res.send({ data: card }); })
+            .catch((err) => {
+              if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
+                next(new BadRequestError('Переданы некорректные данные'));
+              } else {
+                next(new ServerError('Произошла ошибка'));
+              }
+            });
+        } else next(new ForbiddenError('Карточка принадлежит другому пользователю'));
+      } else next(new NotFoundError('Карточка с таким id не найдена'));
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
