@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { constants } = require('http2');
 const mongoose = require('mongoose');
 const { celebrate, Joi, errors } = require('celebrate');
 const {
@@ -9,6 +10,7 @@ const {
 const auth = require('./middlewares/auth');
 
 const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/;
+const emailRegex = /^([a-z0-9_.-]+)@([a-z0-9_.-]+)\.([a-z.]{2,6})$/;
 const { PORT = 3000 } = process.env;
 const app = express();
 app.use(bodyParser.json());
@@ -16,22 +18,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
-/*
-const addId = (req, res, next) => {
-  req.user = {
-    _id: '636a3db2bb298af34444554f',
-  };
-  next();
-};
-*/
-
 app.post('/signin', login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().pattern(urlRegex),
-    email: Joi.string().required().email(),
+    email: Joi.string().required().pattern(emailRegex),
     password: Joi.string().required(),
   }),
 }), createUser);
@@ -41,8 +34,11 @@ app.use('/', require('./routes/user'));
 app.use('/', require('./routes/card'));
 
 app.use(errors());
-app.use((req, res) => {
-  res.status(404).send({ message: 'Такого роута не существует' });
+app.use((err, req, res, next) => {
+  const status = err.statusCode || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
+  const message = err.message || 'Неизвестная ошибка';
+  res.status(status).send({ message });
+  next();
 });
 
 app.listen(PORT, () => {
