@@ -10,7 +10,7 @@ const {
 const auth = require('./middlewares/auth');
 
 const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/;
-const emailRegex = /^([a-z0-9_.-]+)@([a-z0-9_.-]+)\.([a-z.]{2,6})$/;
+const emailRegex = /^([a-zA-Z0-9_.-]+)@([a-z0-9_.-]+)\.([a-z.]{2,6})$/;
 const { PORT = 3000 } = process.env;
 const app = express();
 app.use(bodyParser.json());
