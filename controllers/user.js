@@ -1,4 +1,3 @@
-const { constants } = require('http2');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -10,6 +9,7 @@ const ServerError = require('../errors/ServerError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
 module.exports.getMe = (req, res, next) => {
+  console.log(req);
   const id = req.user._id;
   User.findById(id)
     .then((user) => {
@@ -25,12 +25,12 @@ module.exports.getMe = (req, res, next) => {
     });
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => {
       res.send({ data: users });
     })
-    .catch(() => res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' }));
+    .catch(() => next(new ServerError('Произошла ошибка')));
 };
 
 module.exports.getUserById = (req, res, next) => {
@@ -38,13 +38,13 @@ module.exports.getUserById = (req, res, next) => {
   User.findById(id)
     .then((user) => {
       if (user) res.send({ data: user });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
+      else next(new NotFoundError('Пользователь с таким id не найден'));
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
-        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        next(new ServerError('Произошла ошибка'));
       }
     });
 };
@@ -73,39 +73,39 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-module.exports.updateMeInfo = (req, res) => {
+module.exports.updateMeInfo = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user) res.send({ data: user });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
+      else next(new NotFoundError('Пользователь с таким id не найден'));
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
-        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
-        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        next(new ServerError('Произошла ошибка'));
       }
     });
 };
 
-module.exports.updateMeAvatar = (req, res) => {
+module.exports.updateMeAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (user) res.send({ data: user });
-      else res.status(constants.HTTP_STATUS_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
+      else next(new NotFoundError('Пользователь с таким id не найден'));
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
-        res.status(constants.HTTP_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
-        res.status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR).send({ message: 'Произошла ошибка' });
+        next(new ServerError('Произошла ошибка'));
       }
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -113,8 +113,5 @@ module.exports.login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch((err) => {
-      // ошибка аутентификации
-      res.status(401).send({ message: err.message });
-    });
+    .catch(() => next(new UnauthorizedError('Произошла ошибка')));
 };
