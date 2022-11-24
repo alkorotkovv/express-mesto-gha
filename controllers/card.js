@@ -1,10 +1,8 @@
-const { constants } = require('http2');
 const Card = require('../models/card');
 const BadRequestError = require('../errors/BadRequestError');
 const ForbiddenError = require('../errors/ForbiddenError');
 const NotFoundError = require('../errors/NotFoundError');
 const ServerError = require('../errors/ServerError');
-const UnauthorizedError = require('../errors/UnauthorizedError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -36,10 +34,23 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCardById = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
-    .then((card) => {
-      if (card) res.send({ data: card });
-      else next(new NotFoundError('Пользователь с таким id не найден'));
+
+  Card.findById(cardId).populate('owner')
+    .then((cardData) => {
+      if (cardData.owner._id.toString() === req.user._id) {
+        Card.findByIdAndRemove(cardId)
+          .then((card) => {
+            if (card) res.send({ data: card });
+            else next(new NotFoundError('Карточка с таким id не найдена'));
+          })
+          .catch((err) => {
+            if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
+              next(new BadRequestError('Переданы некорректные данные'));
+            } else {
+              next(new ServerError('Произошла ошибка'));
+            }
+          });
+      } else next(new ForbiddenError('Карточка принадлежит другому пользователю'));
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
@@ -55,7 +66,7 @@ module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (card) res.send({ data: card });
-      else next(new NotFoundError('Пользователь с таким id не найден'));
+      else next(new NotFoundError('Карточка с таким id не найдена'));
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
@@ -71,7 +82,7 @@ module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (card) res.send({ data: card });
-      else next(new NotFoundError('Пользователь с таким id не найден'));
+      else next(new NotFoundError('Карточка с таким id не найдена'));
     })
     .catch((err) => {
       if ((err.name === 'CastError') || (err.name === 'ValidationError')) {
