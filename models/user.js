@@ -47,18 +47,18 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
+      console.log(user);
       if (!user) {
-        return new UnauthorizedError('Неверный логин или пароль');
+        return Promise.reject(new UnauthorizedError('Неверный логин или пароль'));
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return new UnauthorizedError('Неверный логин или пароль');
+            return Promise.reject(new UnauthorizedError('Неверный логин или пароль'));
           }
           return user; // теперь user доступен
         });
-    })
-    .catch(() => new UnauthorizedError('Неверный логин или пароль'));
+    });
 };
 
 module.exports = mongoose.model('user', userSchema);
