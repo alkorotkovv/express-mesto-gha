@@ -12,10 +12,6 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
-    validate: {
-      validator: (value) => !Joi.string().uri({ scheme: ['http', 'https'] }).required().validate(value).error,
-      message: () => 'Неверный формат ссылки у картинки',
-    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
