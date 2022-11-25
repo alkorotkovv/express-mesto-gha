@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
-const Joi = require('celebrate');
-const UnauthorizedError = require('../errors/UnauthorizedError');
+const { Joi } = require('celebrate');
+
+const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/;
 
 const userSchema = new mongoose.Schema({
   versionKey: false,
@@ -21,6 +22,10 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+    validate: {
+      validator: (url) => !Joi.string().pattern(urlRegex).validate(url).error,
+      message: () => 'Неверный формат url',
+    },
   },
   email: {
     type: String,
