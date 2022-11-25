@@ -4,7 +4,6 @@ const NotFoundError = require('../errors/NotFoundError');
 const userRouter = require('./user');
 const cardRouter = require('./card');
 const auth = require('../middlewares/auth');
-const errorsHadler = require('../middlewares/errors');
 
 const {
   login,
@@ -41,7 +40,5 @@ router.use((req, res, next) => {
 });
 
 router.use(errors());
-
-router.use(errorsHadler);
 
 module.exports = router;
