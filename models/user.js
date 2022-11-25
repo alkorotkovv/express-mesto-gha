@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const Joi = require('celebrate');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
-const urlSchema = Joi.string().uri({ scheme: ['http', 'https'] }).required();
 const userSchema = new mongoose.Schema({
   versionKey: false,
   name: { // у пользователя есть имя — опишем требования к имени в схеме:
@@ -23,7 +22,7 @@ const userSchema = new mongoose.Schema({
     type: String, // имя — это строка
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (value) => !urlSchema.validate(value).error,
+      validator: (value) => !Joi.string().uri({ scheme: ['http', 'https'] }).required().validate(value).error,
       message: () => 'Неверный формат ссылки у аватара',
     },
   },

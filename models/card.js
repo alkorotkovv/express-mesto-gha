@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('celebrate');
 
-const urlSchema = Joi.string().uri({ scheme: ['http', 'https'] }).required();
 const cardSchema = new mongoose.Schema({
   versionKey: false,
   name: { // у пользователя есть имя — опишем требования к имени в схеме:
@@ -14,8 +13,8 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (value) => !urlSchema.validate(value).error,
-      message: () => 'Неверный формат ссылки у аватара',
+      validator: (value) => !Joi.string().uri({ scheme: ['http', 'https'] }).required().validate(value).error,
+      message: () => 'Неверный формат ссылки у картинки',
     },
   },
   owner: {
