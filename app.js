@@ -8,6 +8,7 @@ const {
   createUser,
 } = require('./controllers/user');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/NotFoundError');
 
 const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/;
 const emailRegex = /^([a-zA-Z0-9_.-]+)@([a-z0-9_.-]+)\.([a-z.]{2,6})$/;
@@ -38,16 +39,17 @@ app.use(auth);
 app.use('/', require('./routes/user'));
 app.use('/', require('./routes/card'));
 
+app.use((req, res, next) => {
+  next(new NotFoundError('Такого роута не существует'));
+});
+
 app.use(errors());
+
 app.use((err, req, res, next) => {
   const status = err.statusCode || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
   const message = err.message || 'Неизвестная ошибка';
   res.status(status).send({ message });
   next();
-});
-
-app.use((req, res) => {
-  res.status(404).send({ message: 'Такого роута не существует' });
 });
 
 app.listen(PORT, () => {
