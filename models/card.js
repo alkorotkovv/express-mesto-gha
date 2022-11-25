@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const Joi = require('celebrate');
+const { Joi } = require('celebrate');
+
+const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/;
 
 const cardSchema = new mongoose.Schema({
   versionKey: false,
@@ -12,6 +14,10 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: (url) => !Joi.string().pattern(urlRegex).required().validate(url).error,
+      message: () => 'Неверный формат url',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
