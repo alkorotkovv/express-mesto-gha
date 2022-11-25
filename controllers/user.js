@@ -7,7 +7,6 @@ const NotFoundError = require('../errors/NotFoundError');
 const ServerError = require('../errors/ServerError');
 
 module.exports.getMe = (req, res, next) => {
-  console.log(req);
   const id = req.user._id;
   User.findById(id)
     .then((user) => {
