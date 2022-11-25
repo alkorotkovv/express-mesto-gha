@@ -39,10 +39,6 @@ app.use(auth);
 app.use('/', require('./routes/user'));
 app.use('/', require('./routes/card'));
 
-app.use((req, res, next) => {
-  next(new NotFoundError('Такого роута не существует'));
-});
-
 app.use(errors());
 
 app.use((err, req, res, next) => {
@@ -50,6 +46,10 @@ app.use((err, req, res, next) => {
   const message = err.message || 'Неизвестная ошибка';
   res.status(status).send({ message });
   next();
+});
+
+app.use((req, res, next) => {
+  next(new NotFoundError('Такого роута не существует'));
 });
 
 app.listen(PORT, () => {
