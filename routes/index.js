@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const { celebrate, Joi, errors } = require('celebrate');
-const { constants } = require('http2');
 const NotFoundError = require('../errors/NotFoundError');
 const userRouter = require('./user');
 const cardRouter = require('./card');
 const auth = require('../middlewares/auth');
+const errorsHadler = require('../middlewares/errors');
 
 const {
   login,
@@ -42,11 +42,6 @@ router.use((req, res, next) => {
 
 router.use(errors());
 
-router.use((err, req, res, next) => {
-  const status = err.statusCode || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
-  const message = err.message || 'Неизвестная ошибка';
-  res.status(status).send({ message });
-  next();
-});
+router.use(errorsHadler);
 
 module.exports = router;
