@@ -57,7 +57,8 @@ userSchema.statics.findUserByCredentials = function (email, password) {
           }
           return user; // теперь user доступен
         });
-    });
+    })
+    .catch(() => new UnauthorizedError('Неверный логин или пароль'));
 };
 
 module.exports = mongoose.model('user', userSchema);
