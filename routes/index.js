@@ -4,6 +4,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const userRouter = require('./user');
 const cardRouter = require('./card');
 const auth = require('../middlewares/auth');
+const { requestLogger, errorLogger } = require('../middlewares/logger');
 
 const {
   login,
@@ -12,6 +13,8 @@ const {
 
 const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/;
 const emailRegex = /^([a-zA-Z0-9_.-]+)@([a-z0-9_.-]+)\.([a-z.]{2,6})$/;
+
+router.use(requestLogger); // подключаем логгер запросов
 
 router.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -38,6 +41,8 @@ router.use('/', cardRouter);
 router.use((req, res, next) => {
   next(new NotFoundError('Такого роута не существует'));
 });
+
+router.use(errorLogger); // подключаем логгер ошибок
 
 router.use(errors());
 
