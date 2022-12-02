@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
