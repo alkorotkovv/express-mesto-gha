@@ -45,7 +45,7 @@ router.use((req, res, next) => {
 
 router.use(errorLogger); // подключаем логгер ошибок
 
-router.use(errors());
 router.use(errorsHandler);
+router.use(errors());
 
 module.exports = router;
