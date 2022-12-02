@@ -16,6 +16,12 @@ const emailRegex = /^([a-zA-Z0-9_.-]+)@([a-z0-9_.-]+)\.([a-z.]{2,6})$/;
 
 router.use(requestLogger); // подключаем логгер запросов
 
+router.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
+
 router.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().pattern(emailRegex),
