@@ -4,6 +4,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const userRouter = require('./user');
 const cardRouter = require('./card');
 const auth = require('../middlewares/auth');
+const errorsHandler = require('../middlewares/errors');
 const { requestLogger, errorLogger } = require('../middlewares/logger');
 
 const {
@@ -44,6 +45,7 @@ router.use((req, res, next) => {
 
 router.use(errorLogger); // подключаем логгер ошибок
 
+router.use(errorsHandler);
 router.use(errors());
 
 module.exports = router;

@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 
 const cors = require('cors');
 const routes = require('./routes');
-const errorsHandler = require('./middlewares/errors');
 //const cors = require('./middlewares/cors');
 
 const { PORT = 3000 } = process.env;
@@ -16,7 +15,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.use(cors());
 app.use(routes);
-app.use(errorsHandler);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
