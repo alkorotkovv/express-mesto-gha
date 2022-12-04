@@ -106,13 +106,16 @@ module.exports.updateMeAvatar = (req, res, next) => {
 };
 
 module.exports.login = (req, res, next) => {
+  console.log(JWT_SECRET);
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      console.log(user._id);
+      //console.log(user._id);
       // аутентификация успешна! пользователь в переменной user
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.send({ token });
+      console.log("вот такой токен отдает сервер");
+      console.log(token);
     })
     .catch((err) => next(err));
 };
