@@ -1,10 +1,11 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 require('dotenv').config();
 const { errors } = require('celebrate');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-
 const cors = require('cors');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 const routes = require('./routes');
 const errorsHandler = require('./middlewares/errors');
 
@@ -16,7 +17,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
 
 app.use(cors());
+
+app.use(requestLogger); // подключаем логгер запросов
 app.use(routes);
+app.use(errorLogger); // подключаем логгер ошибок
 
 app.use(errors());
 app.use(errorsHandler);
